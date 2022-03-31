@@ -18,5 +18,13 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neppiness/Dwitter_server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/neppiness/Dwitter_server/issues"
+  },
+  "homepage": "https://github.com/neppiness/Dwitter_server#readme"
 }
