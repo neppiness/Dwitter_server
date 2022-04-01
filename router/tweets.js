@@ -45,13 +45,12 @@ router.get('/:id', (req, res, next) => {
 });
 
 // POST /tweets
-// Ellie's code
 router.post('/', (req, res, next) => {
     const { text, name, username } = req.body;
     const newTweet = {
         id: Date.now().toString(),
-        text: req.body.text,
-        createdAt:  new Date(),
+        text,
+        createdAt: new Date(),
         name,
         username
     }
@@ -60,26 +59,33 @@ router.post('/', (req, res, next) => {
 });
 
 // PUT /tweets/:id
-function findTweetByID(id) {
-    let foundTweet = null;
-    tweets.forEach(tweet => {
-        if (tweet.id == id) {foundTweet = tweet};
-    });
-    return foundTweet;
-};
-
 router.put('/:id', (req, res, next) => {
     const reqText = req.body.text;
     const id = req.params.id;
-    const foundTweet = findTweetByID(id);
-    if (foundTweet == null) {
-        res.status(404).json({message: `Tweet id#${id} not found`});
-    } else {
+    const foundTweet = tweets.find(tweet => tweet.id === id)
+    if (foundTweet) {
         foundTweet.text = reqText;
-        foundTweet.createdAt = Date.now().toString();
-        res.status(200).json(tweets);
+        foundTweet.createdAt = new Date();
+        res.status(200).json(foundTweet);
+    } else {
+        res.status(404).json({message: `Tweet id#${id} not found`});
     }
 });
+
+//Ellie's code
+/*
+router.put('/:id', (req, res, next) => {
+    const id = req.params.id;
+    const text = req.body.text;
+    const tweet = tweets.find((tweet) => tweet.id === id);
+    if (tweet) {
+        tweet.text = text;
+        res.status(200).json(tweet);
+    } else {
+        res.status(404).json({ message: `Tweet id(${id}) not found` });
+    }
+});
+*/
 
 // DELETE /tweets/:id
 function findTweetIndex(id) {
