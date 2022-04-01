@@ -2,14 +2,24 @@ import express from 'express';
 
 const router = express.Router();
 
+// need to be debugged
+
 let tweets = [
     {
         id: '1',
-        text: "하",
+        text: '드림코더분들 화이팅!',
         createdAt: Date.now().toString(),
-        name: "kim",
-        username: "kim"
-    }
+        name: 'Bob',
+        username: 'bob',
+        url: 'https://widgetwhats.com/app/uploads/2019/11/free-profile-photo-whatsapp-1.png',
+    },
+    {
+        id: '2',
+        text: '안뇽!',
+        createdAt: Date.now().toString(),
+        name: 'Ellie',
+        username: 'ellie',
+    },
 ];
 
 // GET /tweets
@@ -35,27 +45,18 @@ router.get('/:id', (req, res, next) => {
 });
 
 // POST /tweets
+// Ellie's code
 router.post('/', (req, res, next) => {
-    // const {text, name, username} = req.body;
-    // const tweet = {
-    //     id: String(noOfTweets + 1),
-    //     text,
-    //     createdAt: new Date(),
-    //     name,
-    //     username
-    // };
-
-    let noOfTweets = tweets.length;
+    const { text, name, username } = req.body;
     const newTweet = {
-        id: String(noOfTweets + 1),
+        id: Date.now().toString(),
         text: req.body.text,
-        createdAt: Date.now().toString(),
-        name: 'Kim',
-        username: 'kim',
-        url: './img/profile.jpg'
+        createdAt:  new Date(),
+        name,
+        username
     }
     tweets.push(newTweet);
-    res.status(201).json(tweets);
+    res.status(201).json(newTweet);
 });
 
 // PUT /tweets/:id
@@ -79,20 +80,6 @@ router.put('/:id', (req, res, next) => {
         res.status(200).json(tweets);
     }
 });
-
-/* Ellie's Code
-router.put('/:id', (req, res, next) => {
-    const reqText = req.body.text;
-    const id = req.params.id;
-    const tweet = tweets.find((tweet) => tweet.id === id);
-    if(tweet) {
-        tweet.text = reqText;
-        res.status(200).json(tweet);
-    } else {
-        res.status(404).json({message: `Tweet id#${id} not found`});
-    }
-});
-*/
 
 // DELETE /tweets/:id
 function findTweetIndex(id) {
@@ -121,13 +108,5 @@ router.delete('/:id', (req, res, next) => {
     }
     res.status(204).send(tweets);
 });
-
-/* Ellie's Code...
-router.delete('/:id', (req, res, next) => {
-    const id = req.params.id;
-    tweets = tweets.filter(tweet => tweet.id ! === id);
-    res.sendStatus(204)
-});
-*/
 
 export default router;
