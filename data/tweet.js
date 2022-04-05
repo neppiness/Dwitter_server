@@ -16,10 +16,23 @@ export let tweets = [
     },
 ];
 
+export function findTweetsById(id) {
+    let data = tweets.find(tweet => tweet.id === id);
+    return data;
+};
+
+export function createNewTweet(req) {
+    const {text, name, username} = req.body;
+    const newTweet = {
+        id: Date.now().toString(),
+        text,
+        createdAt: new Date(),
+        name,
+        username
+    };
+    return newTweet;
+};
+
 export function pushNewTweet(newTweet){
     tweets.push(newTweet);
-}
-
-export function concatTweets(arrayOnLeft, arrayOnRight) {
-    tweets = arrayOnLeft.concat(arrayOnRight);
 };
