@@ -16,12 +16,12 @@ export let tweets = [
     },
 ];
 
-export function findTweetsById(id) {
+export async function findTweetsById(id) {
     let data = tweets.find(tweet => tweet.id === id);
     return data;
 };
 
-export function createNewTweet(req) {
+export async function createNewTweet(req) {
     const {text, name, username} = req.body;
     const newTweet = {
         id: Date.now().toString(),
@@ -33,6 +33,6 @@ export function createNewTweet(req) {
     return newTweet;
 };
 
-export function pushNewTweet(newTweet){
+export async function pushNewTweet(newTweet){
     tweets.push(newTweet);
 };
