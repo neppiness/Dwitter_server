@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+// import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
 // TODO: Make it secure!
@@ -30,6 +30,10 @@ export function checkAccounts(username, password) {
 
 export async function findByUsername(username) {
     return accounts.find((account) => account.username === username);
+}
+
+export async function findById(id) {
+    return accounts.find((account) => account.id === id);
 }
 
 export async function createUser(account) {

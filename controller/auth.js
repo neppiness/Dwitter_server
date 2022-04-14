@@ -49,15 +49,10 @@ function createJwtToken(id) {
     return jwt.sign({ id }, jwtSecreteKey, { expiresIn: jwtExpiresInDays});
 }
 
-/*
 export async function me(req, res, next) {
-    const {token, username} = req.body;
-    let isTokenValid = authDB.verifyToken(token);
-
-    if (isTokenValid) {
-        res.status(200)
-    } else {
-        res.status(404)
+    const user = await authDB.findById(req.userId);
+    if(!user) {
+        return res.status(404).json({ message: 'User not found' });
     }
+    res.status(200).json({ token: req.token, username: user.username});
 };
-*/
