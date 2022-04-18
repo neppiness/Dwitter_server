@@ -5,13 +5,12 @@ import bcrypt from 'bcrypt';
 // Cause it's not good to have the confidential info. on server side.
 const bcryptSaltRounds = 12;
 
-
 // Hashing PW
 const hashedPw = await bcrypt.hash("67890", bcryptSaltRounds);
 
 export const accounts = [
     {
-        "id": Date.now().toString(),
+        "id": new Date().toString(),
         "username": "711jh",
         "password": hashedPw,
         "name": "JaeHyun",
@@ -29,15 +28,19 @@ export function checkAccounts(username, password) {
 };
 
 export async function findByUsername(username) {
-    return accounts.find((account) => account.username === username);
+    return accounts.find((account) => {
+        if(account.username === username) {return true};
+    });
 }
 
 export async function findById(id) {
-    return accounts.find((account) => account.id === id);
+    return accounts.find((account) => {
+        if(account.id === id) {return true};
+    });
 }
 
 export async function createUser(account) {
-    const created = {...account, id: Date.now().toString() };
+    const created = {...account, id: new Date().toString() };
     accounts.push(created);
     return created.id;
 }

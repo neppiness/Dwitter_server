@@ -2,8 +2,8 @@ import * as tweetRepo from '../data/tweet.js';
 
 export async function getAll(req, res, next) {
     const username = req.query.username;
-    const data = await (username
-        ? tweetRepo.tweets.filter(tweet => tweet.username === username)
+    const data = (username
+        ? await tweetRepo.tweets.filter(tweet => tweet.username === username)
         : tweetRepo.tweets);
     res.status(200).json(data);
 };

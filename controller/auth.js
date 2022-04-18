@@ -23,7 +23,8 @@ export async function signUp(req, res, next) {
 
     // Create Using enrolled account
     let enrolled = {username, password: hashedPw, name, email, url};
-    let token = await authDB.createUser(enrolled);
+    let id = await authDB.createUser(enrolled);
+    let token = createJwtToken(id);
     let resData = { token, username };
     res.status(201).json(resData);
 };
@@ -40,7 +41,7 @@ export async function login(req, res, next) {
     if (!isValidPassword) {
         return res.status(401).json({ message: 'Invalid user or password' });
     }
-    console.log(foundAccount.id);
+    console.log(foundAccount.id); // account id를 출력
     const token = createJwtToken(foundAccount.id);
     res.status(200).json({ token, username });
 };

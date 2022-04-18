@@ -2,17 +2,19 @@ export let tweets = [
     {
         id: '1',
         text: '드림코더분들 화이팅!',
-        createdAt: Date.now().toString(),
+        createdAt: new Date().toString(),
         name: 'Bob',
         username: 'bob',
         url: 'https://widgetwhats.com/app/uploads/2019/11/free-profile-photo-whatsapp-1.png',
+        userId: '1'
     },
     {
         id: '2',
         text: '안뇽!',
-        createdAt: Date.now().toString(),
+        createdAt: new Date().toString(),
         name: 'Ellie',
         username: 'ellie',
+        userId: '1'
     },
 ];
 
@@ -26,7 +28,7 @@ export async function createNewTweet(req) {
     const newTweet = {
         id: Date.now().toString(),
         text,
-        createdAt: new Date(),
+        createdAt: new Date().toString(),
         name,
         username
     };
