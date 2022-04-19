@@ -2,7 +2,9 @@ import jwt from 'jsonwebtoken';
 // import bcrypt from 'bcrypt';
 import * as authDB from '../data/auth.js'
 
-const jwtSecreteKey = "DPZ&BcfbMJ8gCfyIdlQT5c0miXU7r@iw";
+import { config } from '../config.js';
+
+const jwtSecreteKey = config.jwt.secretKey;
 
 export async function isAuth(req, res, next) {
 

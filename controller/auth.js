@@ -1,12 +1,11 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import * as authDB from '../data/auth.js';
+import { config } from '../config.js';
 
-// TODO: Make it secure!
-// Cause it's not good to have the confidential info. on server side.
-const jwtSecreteKey = "DPZ&BcfbMJ8gCfyIdlQT5c0miXU7r@iw";
-const jwtExpiresInDays = '2d';
-const bcryptSaltRounds = 12;
+const jwtSecreteKey = config.jwt.secretKey;
+const jwtExpiresInDays = config.jwt.expiresInSec;
+const bcryptSaltRounds = config.bcrypt.saltRounds;
 
 export async function signUp(req, res, next) {
     const {username, password, name, email, url} = req.body;

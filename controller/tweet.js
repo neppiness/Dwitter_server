@@ -1,8 +1,9 @@
 import * as tweetRepo from '../data/tweet.js';
 import jwt from 'jsonwebtoken';
 import * as authDB from '../data/auth.js';
+import { config } from '../config.js';
 
-const jwtSecreteKey = "DPZ&BcfbMJ8gCfyIdlQT5c0miXU7r@iw";
+const jwtSecreteKey = config.jwt.secretKey;
 
 async function findUsernameByToken(req, res, next) {
     const authHeader = req.get('Authorization');
