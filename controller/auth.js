@@ -41,7 +41,6 @@ export async function login(req, res, next) {
     if (!isValidPassword) {
         return res.status(401).json({ message: 'Invalid user or password' });
     }
-    console.log(foundAccount.id); // account id를 출력
     const token = createJwtToken(foundAccount.id);
     res.status(200).json({ token, username });
 };

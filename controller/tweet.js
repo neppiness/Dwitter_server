@@ -1,4 +1,35 @@
 import * as tweetRepo from '../data/tweet.js';
+import jwt from 'jsonwebtoken';
+import * as authDB from '../data/auth.js';
+
+const jwtSecreteKey = "DPZ&BcfbMJ8gCfyIdlQT5c0miXU7r@iw";
+
+async function findUsernameByToken(req, res, next) {
+    const authHeader = req.get('Authorization');
+
+    if(!authHeader) {return res.status(401).json(AUTH_ERROR);}
+
+    const dividedAuthHeader = authHeader.split(' ');
+    const authDirectives = dividedAuthHeader[0];
+    const token = dividedAuthHeader[1];
+
+    if(authDirectives != 'Bearer') {return res.status(401).json(AUTH_ERROR)};
+
+    jwt.verify(
+        token, jwtSecreteKey,
+        async (err, decoded) => {
+            if(err) {
+                return res.status(401).json(AUTH_ERROR);
+            }
+            const account = await authDB.findById(decoded.id);
+
+            if(!account) {
+                return res.status(401).json(AUTH_ERROR);
+            }
+            return account.username;
+        }
+    )
+}
 
 export async function getAll(req, res, next) {
     const username = req.query.username;
@@ -15,6 +46,9 @@ export async function getById(req, res, next) {
 };
 
 export async function post(req, res, next) {
+    let usernameOfToken = await findUsernameByToken(req, res, next);
+    if (usernameOfToken != req.username) {return res.status(403).json()};
+
     let newTweet = await tweetRepo.createNewTweet(req);
     await tweetRepo.pushNewTweet(newTweet);
     res.status(201).json(newTweet);
@@ -22,6 +56,13 @@ export async function post(req, res, next) {
 
 export async function putById(req, res, next) {
     const id = req.params.id;
+
+    let usernameOfToken = await findUsernameByToken(req, res, next);
+
+    let usernameOfTweet = await tweetRepo.findTweetsById(id);
+
+    if (usernameOfToken != usernameOfTweet) {return res.status(403).json()};
+
     const reqText = req.body.text;
 
     let foundTweet = await tweetRepo.tweets.find(tweet => tweet.id === id);
@@ -37,6 +78,11 @@ export async function putById(req, res, next) {
 
 export async function remove(req, res, next) {
     const id = req.params.id;
+
+    let usernameOfToken = await findUsernameByToken(req, res, next);
+    let usernameOfTweet = await tweetRepo.findTweetsById(id);
+    if (usernameOfToken != usernameOfTweet) {return res.status(403).json()};
+
     let modTweets = await tweetRepo.tweets.filter((tweet) => tweet.id === id);
     res.status(204).json(modTweets);
 };

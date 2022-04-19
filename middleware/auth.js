@@ -26,12 +26,11 @@ export async function isAuth(req, res, next) {
             }
             const account = await authDB.findById(decoded.id);
 
-            console.log(decoded.id);
-
             if(!account) {
                 return res.status(401).json(AUTH_ERROR);
             }
             req.userId = account.id;
+            req.username = account.username;
             next();
         }
     )
