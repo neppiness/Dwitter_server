@@ -49,7 +49,6 @@ export async function getById(req, res, next) {
 export async function post(req, res, next) {
     let usernameOfToken = await findUsernameByToken(req, res, next);
     if (usernameOfToken != req.username) {return res.status(403).json()};
-
     let newTweet = await tweetRepo.createNewTweet(req);
     await tweetRepo.pushNewTweet(newTweet);
     res.status(201).json(newTweet);
@@ -69,7 +68,7 @@ export async function putById(req, res, next) {
 
     if (foundTweet) {
         foundTweet.text = reqText;
-        foundTweet.createdAt = new Date();
+        foundTweet.createdAt = new Date().toString();
         res.status(200).json(foundTweet);
     } else {
         res.status(404).json({message: `Tweet id#${id} not found`});

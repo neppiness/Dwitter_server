@@ -11,12 +11,12 @@ const hashedPw = await bcrypt.hash("67890", bcryptSaltRounds);
 
 export const accounts = [
     {
-        "id": Date.now().toString(),
-        "username": "bob",
-        "password": hashedPw,
-        "name": "Bob",
-        "email": "bob@naver.com",
-        "url": ""
+        id: new Date().toString(),
+        username: 'bob',
+        password: hashedPw,
+        name: 'Bob',
+        email: 'bob@naver.com',
+        url: ''
     }
 ];
 

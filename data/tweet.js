@@ -14,7 +14,7 @@ export let tweets = [
         createdAt: new Date().toString(),
         name: 'Ellie',
         username: 'ellie',
-        userId: '1'
+        userId: '2'
     },
 ];
 
@@ -25,6 +25,7 @@ export async function findTweetsById(id) {
 
 export async function createNewTweet(req) {
     const {text, name, username} = req.body;
+
     const newTweet = {
         id: Date.now().toString(),
         text,

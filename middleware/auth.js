@@ -31,6 +31,8 @@ export async function isAuth(req, res, next) {
             }
             req.userId = account.id;
             req.username = account.username;
+            req.body.username = account.username;
+            req.body.name = account.name;
             next();
         }
     )
