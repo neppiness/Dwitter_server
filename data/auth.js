@@ -1,9 +1,10 @@
 // import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import { config } from '../config.js'; 
 
 // TODO: Make it secure!
 // Cause it's not good to have the confidential info. on server side.
-const bcryptSaltRounds = 12;
+const bcryptSaltRounds = config.bcrypt.saltRounds;
 
 // Hashing PW
 const hashedPw = await bcrypt.hash("67890", bcryptSaltRounds);
@@ -35,7 +36,7 @@ export async function findByUsername(username) {
 
 export async function findById(id) {
     return accounts.find((account) => {
-        if(account.id === id) {return true};
+        if(account.id === id) {return true;}
     });
 }
 

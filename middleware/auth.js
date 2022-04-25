@@ -4,12 +4,10 @@ import * as authDB from '../data/auth.js'
 
 import { config } from '../config.js';
 
-const jwtSecreteKey = config.jwt.secretKey;
+const jwtSecretKey = config.jwt.secretKey;
 
 export async function isAuth(req, res, next) {
-
     const AUTH_ERROR = {message: 'Authentication Error'};
-
     const authHeader = req.get('Authorization');
 
     if(!authHeader) {return res.status(401).json(AUTH_ERROR);}
@@ -21,7 +19,7 @@ export async function isAuth(req, res, next) {
     if(authDirectives != 'Bearer') {return res.status(401).json(AUTH_ERROR)};
 
     jwt.verify(
-        token, jwtSecreteKey,
+        token, jwtSecretKey,
         async (err, decoded) => {
             if(err) {
                 return res.status(401).json(AUTH_ERROR);

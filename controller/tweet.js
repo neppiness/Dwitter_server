@@ -16,7 +16,7 @@ async function findUsernameByToken(req, res, next) {
 
     if(authDirectives != 'Bearer') {return res.status(401).json(AUTH_ERROR)};
 
-    jwt.verify(
+    return jwt.verify(
         token, jwtSecreteKey,
         async (err, decoded) => {
             if(err) {
@@ -57,11 +57,10 @@ export async function post(req, res, next) {
 
 export async function putById(req, res, next) {
     const id = req.params.id;
-
     let usernameOfToken = await findUsernameByToken(req, res, next);
-
-    let usernameOfTweet = await tweetRepo.findTweetsById(id);
-
+    let tweetOfId = await tweetRepo.findTweetsById(id);
+    let usernameOfTweet = tweetOfId.username;
+    
     if (usernameOfToken != usernameOfTweet) {return res.status(403).json()};
 
     const reqText = req.body.text;
@@ -81,8 +80,8 @@ export async function remove(req, res, next) {
     const id = req.params.id;
 
     let usernameOfToken = await findUsernameByToken(req, res, next);
-    let usernameOfTweet = await tweetRepo.findTweetsById(id);
-    if (usernameOfToken != usernameOfTweet) {return res.status(403).json()};
+    let tweetOfId = await tweetRepo.findTweetsById(id);
+    if (usernameOfToken != tweetOfId.username) {return res.status(403).json()};
 
     let modTweets = await tweetRepo.tweets.filter((tweet) => tweet.id === id);
     res.status(204).json(modTweets);
