@@ -19,5 +19,11 @@ export const config = {
     },
     host: {
         port: required('HOST_PORT', 8080)
+    },
+    db: {
+        host: required('DATABASE_HOST'),
+        user: required('DATABASE_USER'),
+        name: required('DATABASE_NAME'),
+        PW: required('DATABASE_PW')
     }
 };

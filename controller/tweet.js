@@ -2,6 +2,7 @@ import * as tweetRepo from '../data/tweet.js';
 import jwt from 'jsonwebtoken';
 import * as authDB from '../data/auth.js';
 import { config } from '../config.js';
+import { getSocketIO } from '../connection/socket.js';
 
 const jwtSecreteKey = config.jwt.secretKey;
 
@@ -52,6 +53,7 @@ export async function post(req, res, next) {
     let newTweet = await tweetRepo.createNewTweet(req);
     await tweetRepo.pushNewTweet(newTweet);
     res.status(201).json(newTweet);
+    getSocketIO().emit('tweets', newTweet);
 }
 
 export async function putById(req, res, next) {

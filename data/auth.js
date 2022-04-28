@@ -9,14 +9,21 @@ const bcryptSaltRounds = config.bcrypt.saltRounds;
 // Hashing PW
 const hashedPw = await bcrypt.hash("67890", bcryptSaltRounds);
 
+// dummy accounts
 export const accounts = [
     {
-        id: new Date().toString(),
+        id: '1',
         username: 'bob',
         password: hashedPw,
         name: 'Bob',
         email: 'bob@naver.com',
-        url: ''
+    },
+    {
+        id: '2',
+        username: 'neppy',
+        password: hashedPw,
+        name: 'Nepppiness',
+        email: '0414kjh@naver.com',
     }
 ];
 
