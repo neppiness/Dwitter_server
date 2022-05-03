@@ -1,41 +1,35 @@
-export let tweets = [
-    {
-        id: '1',
-        text: '드림코더분들 화이팅!',
-        createdAt: new Date().toString(),
-        name: 'Bob',
-        username: 'bob',
-        url: 'https://widgetwhats.com/app/uploads/2019/11/free-profile-photo-whatsapp-1.png',
-        userId: '1'
-    },
-    {
-        id: '2',
-        text: '안뇽!',
-        createdAt: new Date().toString(),
-        name: 'Ellie',
-        username: 'ellie',
-        userId: '2'
-    },
-];
+import { db } from '../db/database.js';
+
+const SELECT_JOIN = 'SELECT tw.id, tw.text, tw.createdAt, tw.userId, us.username, us.name, us.url '
+    + 'FROM tweets as tw JOIN users as us '
+    + 'ON tw.userId=us.id ';
+const ORDER_DESC = 'ORDER BY tw.createdAt DESC';
+
+export async function queryingAll() {
+    return db
+        .execute(`${SELECT_JOIN} ${ORDER_DESC}`)
+        .then(result => result[0]);
+}
+
+export async function queryingByUsername(username) {
+    return db
+        .execute(`${SELECT_JOIN} WHERE username=? ${ORDER_DESC}`, [username])
+        .then(result => result[0]);
+}
 
 export async function findTweetsById(id) {
-    let data = tweets.find(tweet => tweet.id === id);
-    return data;
+    return db
+        .execute(`${SELECT_JOIN} WHERE tw.id=?`, [id])
+        .then(result => result[0][0]);
 };
 
-export async function createNewTweet(req) {
-    const {text, name, username} = req.body;
+export async function createNew(text, userId) {
+    return db.execute('INSERT INTO tweets (text, createdAt, userId) VALUES(?,?,?)',
+        [text, new Date(), userId])
+        .then(result => findTweetsById(result[0].insertId));
+}
 
-    const newTweet = {
-        id: Date.now().toString(),
-        text,
-        createdAt: new Date().toString(),
-        name,
-        username
-    };
-    return newTweet;
-};
-
-export async function pushNewTweet(newTweet){
-    tweets.push(newTweet);
+// delete, need to be modified
+export async function deleteById(id) {
+    return db.execute(`DELETE FROM tweets WHERE tweets.id=?`, [id])
 };

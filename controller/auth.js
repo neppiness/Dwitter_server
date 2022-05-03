@@ -10,48 +10,47 @@ const bcryptSaltRounds = config.bcrypt.saltRounds;
 export async function signUp(req, res, next) {
     const {username, password, name, email, url} = req.body;
 
-    // Have to deal with the duplicated account info
     let foundAccount = await authDB.findByUsername(username);
     if (foundAccount) {
-        res.status(409)
+        return res.status(409)
             .json({ message: 'Duplicated username'});
     };
 
-    // Hashing PW
     const hashedPw = await bcrypt.hash(password, bcryptSaltRounds);
 
-    // Create Using enrolled account
-    let enrolled = {username, password: hashedPw, name, email, url};
-    let id = await authDB.createUser(enrolled);
+    let enrolledAccount = {username, password: hashedPw, name, email, url};
+    let id = await authDB.createUser(enrolledAccount);
     let token = createJwtToken(id);
-    let resData = { token, username };
+    let resData = {token, username};
     res.status(201).json(resData);
 };
 
 export async function login(req, res, next) {
-    const { username, password } = req.body;
+    const {username, password} = req.body;
 
     const foundAccount = await authDB.findByUsername(username);
+
     if (!foundAccount) {
-        return res.status(401).json({ message: 'Invalide user or password'});
+        return res.status(401).json({message: 'Invalide user or password'});
     }
 
     const isValidPassword = await bcrypt.compare(password, foundAccount.password);
     if (!isValidPassword) {
-        return res.status(401).json({ message: 'Invalid user or password' });
+        return res.status(401).json({message: 'Invalid user or password'});
     }
+
     const token = createJwtToken(foundAccount.id);
-    res.status(200).json({ token, username });
+    res.status(200).json({token, username});
 };
 
 function createJwtToken(id) {
-    return jwt.sign({ id }, jwtSecreteKey, { expiresIn: jwtExpiresInDays});
+    return jwt.sign({id}, jwtSecreteKey, {expiresIn: jwtExpiresInDays});
 }
 
 export async function me(req, res, next) {
     const user = await authDB.findById(req.userId);
     if(!user) {
-        return res.status(404).json({ message: 'User not found' });
+        return res.status(404).json({message: 'User not found'});
     }
-    res.status(200).json({ token: req.token, username: user.username});
+    res.status(200).json({token: req.token, username: user.username});
 };
