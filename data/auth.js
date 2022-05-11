@@ -1,55 +1,43 @@
-import {db} from '../db/database.js';
-import bcrypt from 'bcrypt';
-import { config } from '../config.js'; 
+import SQ from 'sequelize';
+import { sequelize } from '../db/database.js';
+const DataTypes = SQ.DataTypes;
 
-const bcryptSaltRounds = config.bcrypt.saltRounds;
-const hashedPw = await bcrypt.hash("67890", bcryptSaltRounds);
-
-/*
-// dummy accounts
-export const accounts = [
-    {
-        id: '1',
-        username: 'bob',
-        password: hashedPw,
-        name: 'Bob',
-        email: 'bob@naver.com',
+export const Users = sequelize.define('user', {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        allowNull: false,
+        primaryKey: true,
     },
-    {
-        id: '2',
-        username: 'neppy',
-        password: hashedPw,
-        name: 'Nepppiness',
-        email: '0414kjh@naver.com',
+    username: {
+        type: DataTypes.STRING(45),
+        allowNull: false
+    },
+    password: {
+        type: DataTypes.STRING(128),
+        allowNull: false
+    },
+    name: {
+        type: DataTypes.STRING(128),
+        allowNull: false
+    },
+    email: {
+        type: DataTypes.STRING(128),
+        allowNull: false
+    },
+    url: {
+        type: DataTypes.TEXT,
     }
-];
-
-export function checkAccounts(username, password) {
-    let matchAccount = accounts.find((account) => {
-        if((account.username == username)
-        && (account.password == password)) return true;
-    });
-    return matchAccount != null ? true : false
-};
-*/
+}, { timestamps: false });
 
 export async function findByUsername(username) {
-    return db.execute('SELECT * FROM users WHERE username=?',[username])
-    .then(result => {
-        return result[0][0];
-    });
+    return Users.findOne({ where: { username } });
 }
 
 export async function findById(id) {
-    return db.execute('SELECT * FROM users WHERE id=?',[id])
-    .then(result => {
-        return result[0][0];
-    });
+    return Users.findByPk(id);
 }
 
 export async function createUser(user) {
-    const {username, password, name, email, url} = user;
-    return db.execute('INSERT INTO users (username, password, name, email, url) VALUES (?,?,?,?,?)',
-        [username, password, name, email, url]
-    ).then((result) => result[0].insertId);
+    return Users.create(user).then(data => data.dataValues.id);
 }

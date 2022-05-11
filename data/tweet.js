@@ -1,35 +1,62 @@
-import { db } from '../db/database.js';
+import SQ from 'sequelize';
+import { sequelize } from '../db/database.js';
+import { Users } from './auth.js';
+const DataTypes = SQ.DataTypes;
+const Sequelize = SQ.Sequelize;
 
-const SELECT_JOIN = 'SELECT tw.id, tw.text, tw.createdAt, tw.userId, us.username, us.name, us.url '
-    + 'FROM tweets as tw JOIN users as us '
-    + 'ON tw.userId=us.id ';
-const ORDER_DESC = 'ORDER BY tw.createdAt DESC';
+const Tweets = sequelize.define('Tweets', {
+    id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+    },
+    text: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+    },
+}, { timestamps: true, })
+
+const INCLUDE_USER = {
+    attributes: [
+        'id',
+        'text',
+        'createdAt',
+        'userId',
+        [Sequelize.col('user.name'), 'name'],
+        [Sequelize.col('user.username'), 'username'],
+        [Sequelize.col('user.url'), 'url'],
+    ], include: {
+        model: Users,
+        attributes: [],
+    },
+}
+
+const ORDER_CREATEDAT = {
+    order: [['createdAt', 'DESC']],
+}
+
+Tweets.belongsTo(Users);
 
 export async function queryingAll() {
-    return db
-        .execute(`${SELECT_JOIN} ${ORDER_DESC}`)
-        .then(result => result[0]);
+    return Tweets.findAll({
+        ...INCLUDE_USER,
+        ...ORDER_CREATEDAT,
+    }).then((data) => {
+        console.log(data);
+        return data;
+    })
 }
-
-export async function queryingByUsername(username) {
-    return db
-        .execute(`${SELECT_JOIN} WHERE username=? ${ORDER_DESC}`, [username])
-        .then(result => result[0]);
-}
-
-export async function findTweetsById(id) {
-    return db
-        .execute(`${SELECT_JOIN} WHERE tw.id=?`, [id])
-        .then(result => result[0][0]);
-};
 
 export async function createNew(text, userId) {
-    return db.execute('INSERT INTO tweets (text, createdAt, userId) VALUES(?,?,?)',
-        [text, new Date(), userId])
-        .then(result => findTweetsById(result[0].insertId));
+    return Tweets.create({text, userId}).then((data) => {
+        console.log(data);
+        return data;
+    });
 }
 
-// delete, need to be modified
-export async function deleteById(id) {
-    return db.execute(`DELETE FROM tweets WHERE tweets.id=?`, [id])
-};
+export async function findById(id) {
+    return Tweets.findByPk(id).then((data) => {
+        return data;
+    });
+}

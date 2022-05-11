@@ -13,7 +13,7 @@ export async function getAll(req, res, next) {
 
 export async function getById(req, res, next) {
     const id = req.params.id;
-    let data = await tweetRepo.findTweetsById(id);
+    let data = await tweetRepo.findById(id);
     res.status(200).json(data);
 };
 
@@ -30,7 +30,7 @@ export async function post(req, res, next) {
 export async function putById(req, res, next) {
     const id = req.params.id;
     let usernameOfToken = req.username;
-    let tweetOfId = await tweetRepo.findTweetsById(id);
+    let tweetOfId = await tweetRepo.findById(id);
     let usernameOfTweet = tweetOfId.username;
 
     if (usernameOfToken != usernameOfTweet) {return res.status(403).json()};
@@ -50,7 +50,7 @@ export async function remove(req, res, next) {
     const id = req.params.id;
 
     let usernameOfToken = req.username;
-    let tweetOfId = await tweetRepo.findTweetsById(id);
+    let tweetOfId = await tweetRepo.findById(id);
     if (usernameOfToken != tweetOfId.username) {return res.status(403).json()};
 
     await tweetRepo.deleteById(id);
