@@ -25,5 +25,9 @@ export const config = {
         user: required('DATABASE_USER'),
         name: required('DATABASE_NAME'),
         PW: required('DATABASE_PW')
+    },
+    mongodb: {
+        host: required('DATABASE_MONGODB_HOST'),
+        port: required('DATABASE_MONGODB_PORT')
     }
 };

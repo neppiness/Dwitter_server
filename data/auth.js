@@ -1,55 +1,28 @@
-import {db} from '../db/database.js';
-import bcrypt from 'bcrypt';
-import { config } from '../config.js'; 
+import { getUsers } from '../db/database.js';
+import MongoDb from 'mongodb';
 
-const bcryptSaltRounds = config.bcrypt.saltRounds;
-const hashedPw = await bcrypt.hash("67890", bcryptSaltRounds);
-
-/*
-// dummy accounts
-export const accounts = [
-    {
-        id: '1',
-        username: 'bob',
-        password: hashedPw,
-        name: 'Bob',
-        email: 'bob@naver.com',
-    },
-    {
-        id: '2',
-        username: 'neppy',
-        password: hashedPw,
-        name: 'Nepppiness',
-        email: '0414kjh@naver.com',
-    }
-];
-
-export function checkAccounts(username, password) {
-    let matchAccount = accounts.find((account) => {
-        if((account.username == username)
-        && (account.password == password)) return true;
-    });
-    return matchAccount != null ? true : false
-};
-*/
+const ObjectId = MongoDb.ObjectId;
 
 export async function findByUsername(username) {
-    return db.execute('SELECT * FROM users WHERE username=?',[username])
-    .then(result => {
-        return result[0][0];
-    });
+    return getUsers()
+    .findOne({username})
+    .then(mapOptionalUser);
 }
 
 export async function findById(id) {
-    return db.execute('SELECT * FROM users WHERE id=?',[id])
-    .then(result => {
-        return result[0][0];
-    });
+    return getUsers()
+    .findOne({_id: new ObjectId(id)})
+    .then(mapOptionalUser);
 }
 
 export async function createUser(user) {
-    const {username, password, name, email, url} = user;
-    return db.execute('INSERT INTO users (username, password, name, email, url) VALUES (?,?,?,?,?)',
-        [username, password, name, email, url]
-    ).then((result) => result[0].insertId);
+    return getUsers()
+    .insertOne(user)
+    .then(data => {
+        return data.insertedId.toString();
+    })
+}
+
+function mapOptionalUser(user) {
+    return user ? {...user, id: user._id} : user;
 }
