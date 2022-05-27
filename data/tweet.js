@@ -1,35 +1,66 @@
-// import { db } from '../db/database.js';
+import {getTweets} from '../db/database.js';
+import {findById} from '../data/auth.js';
+import MongoDb from 'mongodb';
 
-const SELECT_JOIN = 'SELECT tw.id, tw.text, tw.createdAt, tw.userId, us.username, us.name, us.url '
-    + 'FROM tweets as tw JOIN users as us '
-    + 'ON tw.userId=us.id ';
-const ORDER_DESC = 'ORDER BY tw.createdAt DESC';
+const ObjectId = MongoDb.ObjectId;
 
 export async function queryingAll() {
-    return db
-        .execute(`${SELECT_JOIN} ${ORDER_DESC}`)
-        .then(result => result[0]);
+    let allTweets = [];
+
+    await getTweets()
+    .find({})
+    .forEach(tweet => {
+        allTweets.push(tweet);
+    })
+
+    return allTweets
 }
 
 export async function queryingByUsername(username) {
-    return db
-        .execute(`${SELECT_JOIN} WHERE username=? ${ORDER_DESC}`, [username])
-        .then(result => result[0]);
+    let tweetsFoundByUsername = [];
+
+    await getTweets()
+    .find({username})
+    .forEach(tweet => {
+        tweetsFoundByUsername.push(tweet);
+    })
+
+    return tweetsFoundByUsername;
 }
 
 export async function findTweetsById(id) {
-    return db
-        .execute(`${SELECT_JOIN} WHERE tw.id=?`, [id])
-        .then(result => result[0][0]);
-};
-
-export async function createNew(text, userId) {
-    return db.execute('INSERT INTO tweets (text, createdAt, userId) VALUES(?,?,?)',
-        [text, new Date(), userId])
-        .then(result => findTweetsById(result[0].insertId));
+    return getTweets()
+    .findOne({_id: new ObjectId(id)})
+    .then(mapOptionalTweet);
 }
 
-// delete, need to be modified
+export async function createNew(text, userId) {
+    const user = await findById(userId);
+    const timeStamp = new Date();
+    const tweet = {
+        "username": user.username,
+        "userid": user.id,
+        "createdAt": timeStamp,
+        "updatedAt": timeStamp,
+        text,
+    };
+
+    return getTweets()
+    .insertOne(tweet)
+    .then(data => {
+        return {
+            "id": data.insertedId.toString(),
+            ...tweet,
+        }
+    })
+}
+
 export async function deleteById(id) {
-    return db.execute(`DELETE FROM tweets WHERE tweets.id=?`, [id])
+    id = new ObjectId(id);
+    return getTweets()
+    .deleteOne({_id: new ObjectId(id)})
 };
+
+function mapOptionalTweet(tweet) {
+    return tweet ? {...tweet, id: tweet._id} : tweet;
+}

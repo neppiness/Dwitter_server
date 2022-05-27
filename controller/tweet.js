@@ -22,7 +22,7 @@ export async function post(req, res, next) {
     const text = req.body.text;
 
     let newTweet = await tweetRepo.createNew(text, userId);
-    
+
     res.status(201).json(newTweet);
     getSocketIO().emit('tweets', newTweet);
 }
