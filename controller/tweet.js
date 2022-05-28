@@ -32,18 +32,11 @@ export async function putById(req, res, next) {
     let usernameOfToken = req.username;
     let tweetOfId = await tweetRepo.findTweetsById(id);
     let usernameOfTweet = tweetOfId.username;
-
     if (usernameOfToken != usernameOfTweet) {return res.status(403).json()};
 
     const reqText = req.body.text;
-
-    if (tweetOfId) {
-        tweetOfId.text = reqText;
-        tweetOfId.createdAt = new Date().toString();
-        res.status(200).json(tweetOfId);
-    } else {
-        res.status(404).json({message: `Tweet id#${id} not found`});
-    };
+    let updatedTweet = await tweetRepo.updateTweet(id, reqText);
+    updatedTweet ? res.status(200).json(updatedTweet) : res.status(404).json({message: `Tweet id#${id} not found`});
 }
 
 export async function remove(req, res, next) {
