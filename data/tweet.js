@@ -21,9 +21,13 @@ export async function queryingByUsername(username) {
 }
 
 export async function findTweetsById(id) {
-    return getTweets()
-    .findOne({_id: new ObjectId(id)})
-    .then(mapOptionalTweet);
+    try {
+        return getTweets()
+        .findOne({_id: new ObjectId(id)})
+        .then(mapOptionalTweet);
+    } catch {
+        return null;
+    }
 }
 
 export async function createNew(text, userId) {
@@ -54,9 +58,8 @@ export async function updateTweet(id, text) {
         {$set: {text}},
         {returnDocument: 'after'}
     )
-    .then(console.log)
     .then(result => result.value)
-    .then(mapOptionalTweet);
+    .then(mapOptionalTweet)
 }
 
 function mapOptionalTweet(tweet) {
