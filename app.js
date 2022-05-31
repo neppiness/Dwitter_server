@@ -28,7 +28,8 @@ app.use((error, req, res, next) => {
 });
 
 connectDB()
-.then(() => {
-    const server = app.listen(config.mongodb.port);
-    initSocket(server);
-}).catch(console.error);
+    .then(() => {
+        const server = app.listen(config.mongodb.port);
+        initSocket(server);
+    })
+    .catch(console.error);

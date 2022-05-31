@@ -1,13 +1,22 @@
-import MongoDb from 'mongodb';
 import { config } from '../config.js';
-import mysql from 'mysql2';
+import Mongoose from 'mongoose';
 
 let db;
 
 export async function connectDB() {
-    return MongoDb.MongoClient.connect(config.mongodb.host)
-    .then((client) => db = client.db());
+    return Mongoose.connect(config.mongodb.host);
 }
+
+export function useVirtualId(schema) {
+    // _id -> id
+    schema.virtual('id').get(function() {
+        return this._id.toString();
+    });
+    schema.set('toJSON', {virtuals: true});
+    schema.set('toObject', {virtuals: true});
+}
+
+// TODO(JHKIM): Delete below
 
 export function getUsers(){
     return db.collection('users');
